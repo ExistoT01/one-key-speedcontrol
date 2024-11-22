@@ -119,7 +119,9 @@
     // CSS for the notification
     var style = document.createElement('style');
     style.type = 'text/css';
-    style.innerHTML = `.speed-notification {
+
+    // Use a text node to safely insert CSS rules
+    style.appendChild(document.createTextNode(`.speed-notification {
         position: fixed;
         bottom: 50px;
         right: 20px;
@@ -129,7 +131,8 @@
         border-radius: 4px;
         z-index: 9999999;
         display: none;
-    }`;
+    }`));
+
     document.head.appendChild(style);
 
     // Create the notification element
