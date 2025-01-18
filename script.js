@@ -175,15 +175,18 @@
     function getVideo() {
         let video;
 
-        // Disney+
-        if (window.location.hostname === HOSTNAME_DISNEYPLUS) {
-            let player = document.querySelector('disney-web-player');
-            if (!player) return;
-            video = player.shadowRoot.querySelector('video');
-        }
-        else {
-            video = document.querySelector('video');
-        }
+        // Disney+ now can get video element directly
+
+        // if (window.location.hostname === HOSTNAME_DISNEYPLUS) {
+        //     let player = document.querySelector('disney-web-player');
+        //     if (!player) return;
+        //     video = player.shadowRoot.querySelector('video');
+        // }
+        // else {
+        //     video = document.querySelector('video');
+        // }
+
+        video = document.querySelector('video');
 
         if (!video) {
             console.log(logPrefix, MSG_VIDEO_NOT_FOUND);
