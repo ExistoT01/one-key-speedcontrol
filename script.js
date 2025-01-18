@@ -39,6 +39,9 @@
     const HOSTNAME_YOUTUBE = 'www.youtube.com';
     const HOSTNAME_DISNEYPLUS = 'www.disneyplus.com';
 
+    const VIDEO_SELECTOR = 'video';
+    const VIDEO_SELECTOR_DISNEYPLUS = '#hivePlayer';
+
     let originalSpeed;
     let isSpeedLocked = false;
     let timeoutId;
@@ -175,8 +178,7 @@
     function getVideo() {
         let video;
 
-        // Disney+ now can get video element directly
-
+        // Disney+ odd version
         // if (window.location.hostname === HOSTNAME_DISNEYPLUS) {
         //     let player = document.querySelector('disney-web-player');
         //     if (!player) return;
@@ -186,7 +188,13 @@
         //     video = document.querySelector('video');
         // }
 
-        video = document.querySelector('video');
+        if (window.location.hostname === HOSTNAME_DISNEYPLUS) {
+            video = document.querySelector(VIDEO_SELECTOR_DISNEYPLUS);
+        }
+        else {
+            video = document.querySelector(VIDEO_SELECTOR);
+        }
+
 
         if (!video) {
             console.log(logPrefix, MSG_VIDEO_NOT_FOUND);
