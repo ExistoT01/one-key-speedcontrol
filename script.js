@@ -2,11 +2,12 @@
 // @name         OneKey Speed Control
 // @namespace    http://tampermonkey.net/
 // @version      2024-03-03
-// @description  try to take over the world!
+// @description  A script to control video playback speed and navigation keys
 // @author       ExistoT01
 // @match        https://*/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
 // @grant        none
+// @license MIT
 // ==/UserScript==
 
 (function() {
