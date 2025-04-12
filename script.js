@@ -204,9 +204,24 @@
         return video;
     }
 
+    // skip intro
+    function skip_max() {
+        let skip_div = document.querySelector('div[data-testid="skip"]');
+        let next_div = document.querySelector('div[data-testid="up_next"]')
 
+        if (skip_div && skip_div.style.visibility === 'visible' && skip_div.querySelector('button')) {
+            let skip_btn = skip_div.querySelector('button');
+            skip_btn.click();
+            console.log(logPrefix + "intro skipped! (HBO max)");
+        }
 
+        if (next_div && next_div.style.visibility === 'visible' && next_div.querySelector('button')) {
+            let next_btn = next_div.querySelector('button');
+            next_btn.click();
+            console.log(logPrefix + "skip to next episode (HBO max)");
+        }
+    }
 
-
+    setInterval(skip_max, 1000);
 
 })();
