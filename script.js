@@ -4,6 +4,7 @@
 // @version      2024-03-03
 // @description  A script to control video playback speed and navigation keys
 // @author       ExistoT01
+// @match        http://*/*
 // @match        https://*/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
 // @grant        none
@@ -51,7 +52,7 @@
     document.addEventListener('keydown', function(event) {
         // console.log(logPrefix, 'keydown', event.key);
 
-        if (isSpeedLocked) {
+        if (isTypingTarget(event.target) || isSpeedLocked) {
             return;
         }
 
@@ -106,13 +107,12 @@
 
     document.addEventListener('keyup', function(event) {
         // console.log(logPrefix, 'keyup', event.key);
-
-        isSpeedLocked = false;
-
-        let video = getVideo();
-        if (!video) return;
-
         if (event.key === KEY_LOCK_SPEED) {
+            isSpeedLocked = false;
+
+            let video = getVideo();
+            if (!video) return;
+
             video.playbackRate = originalSpeed;
             notification.style.display = 'none';
             showNotification(TYPE_CHANGE_SPEED, originalSpeed);
@@ -143,6 +143,18 @@
     var notification = document.createElement('div');
     notification.className = 'speed-notification';
     document.body.appendChild(notification);
+
+    // Fucntion to detect if element is typing target
+    function isTypingTarget(el) {
+        if (!el) return false;
+
+        if (el.isContentEditable) return true;
+
+        const tag = (el.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+        
+        return false;
+    }
 
     // Function to show notification
     function showNotification(type, speed) {
@@ -175,7 +187,7 @@
 
     }
 
-    // function to get video element
+    // Function to get video element
     function getVideo() {
         let video;
 
@@ -223,6 +235,6 @@
         }
     }
 
-    setInterval(skip_max, 1000);
+    setInterval(skip_max, 2000);
 
 })();
