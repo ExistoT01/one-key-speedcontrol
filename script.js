@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OneKey Speed Control
 // @namespace    http://tampermonkey.net/
-// @version      2024-03-03
+// @version      2026-01-13
 // @description  A script to control video playback speed and navigation keys
 // @author       ExistoT01
 // @match        http://*/*
@@ -44,9 +44,10 @@
     const VIDEO_SELECTOR = 'video';
     const VIDEO_SELECTOR_DISNEYPLUS = '#hivePlayer';
 
-    let originalSpeed;
+    let originalSpeed = 1;
     let isSpeedLocked = false;
     let timeoutId;
+
 
     // Your code here...
     document.addEventListener('keydown', function(event) {
@@ -81,29 +82,29 @@
             return;
         }
 
-        // Youtube already has this feature
-        if (window.location.hostname !== HOSTNAME_YOUTUBE) {
-            switch (event.key) {
-                case KEY_REWIND: // Jump back 10 seconds
-                    video.currentTime = Math.max(video.currentTime - TIME_UNIT, 0);
-                    showNotification(TYPE_CHANGE_PROGRESS_REWIND);
-                    break;
-                case KEY_PLAY_OR_PAUSE: // Toggle play/pause
-                    if (video.paused) {
-                        video.play();
-                        showNotification(TYPE_PLAY, 0);
-                    } else {
-                        video.pause();
-                        showNotification(TYPE_PAUSE, 0);
-                    }
-                    break;
-                case KEY_FORWORD: // Jump forward 10 seconds
-                    video.currentTime = Math.min(video.currentTime + TIME_UNIT, video.duration);
-                    showNotification(TYPE_CHANGE_PROGRESS_FORWORD);
-                    break;
-            }
+
+        switch (event.key) {
+            case KEY_REWIND: // Jump back 10 seconds
+                video.currentTime = Math.max(video.currentTime - TIME_UNIT, 0);
+                showNotification(TYPE_CHANGE_PROGRESS_REWIND);
+                break;
+            case KEY_PLAY_OR_PAUSE: // Toggle play/pause
+                if (video.paused) {
+                    video.play();
+                    showNotification(TYPE_PLAY, 0);
+                } else {
+                    video.pause();
+                    showNotification(TYPE_PAUSE, 0);
+                }
+                break;
+            case KEY_FORWORD: // Jump forward 10 seconds
+                video.currentTime = Math.min(video.currentTime + TIME_UNIT, video.duration);
+                showNotification(TYPE_CHANGE_PROGRESS_FORWORD);
+                break;
         }
+
     });
+
 
     document.addEventListener('keyup', function(event) {
         // console.log(logPrefix, 'keyup', event.key);
@@ -123,6 +124,7 @@
     // CSS for the notification
     var style = document.createElement('style');
     style.type = 'text/css';
+
 
     // Use a text node to safely insert CSS rules
     style.appendChild(document.createTextNode(`.speed-notification {
@@ -144,6 +146,7 @@
     notification.className = 'speed-notification';
     document.body.appendChild(notification);
 
+
     // Fucntion to detect if element is typing target
     function isTypingTarget(el) {
         if (!el) return false;
@@ -155,6 +158,7 @@
         
         return false;
     }
+
 
     // Function to show notification
     function showNotification(type, speed) {
@@ -187,34 +191,34 @@
 
     }
 
+
+    // Function to check whether video element is usable
+    function isUsableVideo(v) {
+        if (!v || v.tagName.toLowerCase() !== 'video') return false;
+
+        const rect = v.getBoundingClientRect();
+
+        if (rect.width <= 0 || rect.height <= 0) return false;
+
+        const style = getComputedStyle(v);
+
+        if (style.display === 'none' || style.visibility === 'hidden') return false;
+
+        return true;
+    }
+
+
     // Function to get video element
     function getVideo() {
-        let video;
+        const videos = document.querySelectorAll(VIDEO_SELECTOR)
 
-        // Disney+ odd version
-        // if (window.location.hostname === HOSTNAME_DISNEYPLUS) {
-        //     let player = document.querySelector('disney-web-player');
-        //     if (!player) return;
-        //     video = player.shadowRoot.querySelector('video');
-        // }
-        // else {
-        //     video = document.querySelector('video');
-        // }
-
-        if (window.location.hostname === HOSTNAME_DISNEYPLUS) {
-            video = document.querySelector(VIDEO_SELECTOR_DISNEYPLUS);
-        }
-        else {
-            video = document.querySelector(VIDEO_SELECTOR);
+        for (const v of videos) {
+            if (isUsableVideo(v)) return v;
         }
 
+        console.log(logPrefix, MSG_VIDEO_NOT_FOUND);
 
-        if (!video) {
-            console.log(logPrefix, MSG_VIDEO_NOT_FOUND);
-            return;
-        }
-
-        return video;
+        return null;
     }
 
     // skip intro
